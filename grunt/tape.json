@@ -1,0 +1,7 @@
+{
+  "options": {
+    "pretty": true,
+    "output": "console"
+  },
+  "files": ["spec/**/*.spec.js"]
+}
