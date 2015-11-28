@@ -2,7 +2,8 @@ var cleanConfig = require('./grunt/clean.json'),
     concatConfig = require('./grunt/concat.json'),
     copyConfig = require('./grunt/copy.json'),
     eslintConfig = require('./grunt/eslint.json'),
-    uglifyConfig = require('./grunt/uglify.json');
+    uglifyConfig = require('./grunt/uglify.json'),
+    jasmine = require('./grunt/jasmine.json');
 
 module.exports = function(grunt){
     grunt.initConfig({
@@ -12,6 +13,7 @@ module.exports = function(grunt){
         concat: concatConfig,
         copy: copyConfig,
         eslint: eslintConfig,
+        jasmine_nodejs: jasmine,
         uglify: uglifyConfig
     });
 
@@ -22,11 +24,12 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-eslint');
+    grunt.loadNpmTasks('grunt-jasmine-nodejs');
 
     /* Register composite grunt tasks */
 
-    grunt.registerTask('test', ['clean', 'concat', 'eslint']);
-    grunt.registerTask('build', ['uglify', 'copy:nuget']);
+    grunt.registerTask('test', ['clean', 'eslint', 'concat', 'jasmine_nodejs']);
+    grunt.registerTask('build', ['test', 'uglify', 'copy:nuget']);
 
     grunt.registerTask('default', ['build']);
 };
