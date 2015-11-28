@@ -10,7 +10,7 @@
     };
     
     j.isType = function isType (type, value) {
-        return j.getType(value) === type;
+        return j.getType(value) === 'array' && type === 'object' ? true : j.getType(value) === type;
     };
     
     j.isUndefined = function isUndefined (value) {

@@ -26,6 +26,10 @@ describe('isType', function () {
         expect(j.isType('string', 'foo')).toBe(true);
     });
     
+    it('should return true if testing for object and array provided', function () {
+        expect(j.isType('object', [])).toBe(true);
+    });
+    
 });
 
 describe('isUndefined', function () {
