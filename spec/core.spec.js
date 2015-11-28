@@ -111,3 +111,96 @@ describe('pick', function () {
     });
     
 });
+
+describe('identity', function () {
+    
+    it('should return value argument', function () {
+        expect(j.identity('foo')).toBe('foo');
+    });
+    
+});
+
+describe('slice', function () {
+    
+    it('should return an array', function () {
+        expect(j.getType(j.slice(0, []))).toBe('array');
+    });
+    
+    it('should slice an array starting at an index', function () {
+        var result = j.slice(1, [1, 2, 3, 4]);
+        expect(JSON.stringify(result)).toBe('[2,3,4]');
+    });
+    
+    it('should slice an array ending at a count index', function () {
+        var result = j.slice(1, [1, 2, 3, 4], 3);
+        expect(JSON.stringify(result)).toBe('[2,3]');
+    });
+    
+});
+
+describe('apply', function () {
+    
+    it('should apply passed function', function () {
+        var spy = jasmine.createSpy('spy');
+        j.apply(spy);
+        expect(spy).toHaveBeenCalled();
+    });
+    
+    it('should apply passed function with argument array', function () {
+        var spy = jasmine.createSpy('spy');
+        j.apply(spy, [1, 2, 3, 4]);
+        expect(spy).toHaveBeenCalledWith(1, 2, 3, 4);
+    });
+    
+});
+
+describe('partial', function () {
+    
+    it('should return a function', function () {
+        expect(typeof j.partial()).toBe('function');
+    });
+    
+    it('should return a partially applied function', function () {
+        var spy = jasmine.createSpy('spy');
+        j.partial(spy, 'foo')()
+        
+        expect(spy).toHaveBeenCalledWith('foo');
+    });
+    
+    it('should return a partially applied function with multiple arguments', function () {
+        var spy = jasmine.createSpy('spy');
+        j.partial(spy, 1, 2, 3)();
+        
+        expect(spy).toHaveBeenCalledWith(1, 2, 3);
+    });
+    
+    it('should return a partially applied function with multiple arguments and new args', function () {
+        var spy = jasmine.createSpy('spy');
+        j.partial(spy, 1, 2, 3)(4, 5);
+        
+        expect(spy).toHaveBeenCalledWith(1, 2, 3, 4, 5);
+    });
+    
+});
+
+describe('rpartial', function () {
+    
+    it('should return a function', function () {
+        expect(j.getType(j.rpartial())).toBe('function');
+    });
+    
+    it('should apply arguments to a function', function () {
+        var spy = jasmine.createSpy('spy');
+        j.rpartial(spy, 'foo')();
+        
+        expect(spy).toHaveBeenCalledWith('foo');
+    });
+    
+    it('should apply arguments in correct order', function () {
+        var spy = jasmine.createSpy('spy');
+        j.rpartial(spy, 1, 2)(3, 4);
+        
+        expect(spy).toHaveBeenCalledWith(3, 4, 1, 2);
+    });
+    
+});
