@@ -1,70 +1,66 @@
 (function (j) {
     'use strict';
     
-    j.identity = function identity (value) {
-        return value;
+    j.identity = function (val) {
+        return val;
     };
     
-    j.getType = function getType (value) {
-        return Object.prototype.toString.call(value) === '[object Array]' ? 'array' : typeof value;
+    j.getType = function (val) {
+        return Object.prototype.toString.call(val) === '[object Array]' ? 'array' : typeof val;
     };
     
-    j.isType = function isType (type, value) {
-        return j.getType(value) === 'array' && type === 'object' ? true : j.getType(value) === type;
+    j.isType = function (type, val) {
+        return j.getType(val) === 'array' && type === 'object' ? true : j.getType(val) === type;
     };
     
-    j.isUndefined = function isUndefined (value) {
-        return j.isType('undefined', value);
+    j.isUndefined = function (val) {
+        return j.isType('undefined', val);
     };
     
-    j.isNull = function isNull (value) {
-        return value === null;
+    j.isNull = function (val) {
+        return val === null;
     };
     
-    j.not = function not (value) {
-        return !value;
+    j.not = function (val) {
+        return !val;
     };
     
-    j.maybe = function maybe (value) {
-        var notNullable = j.isUndefined(arguments[1]) && Boolean(value);
-        return j.isType(arguments[1], value) || notNullable ? value : null;
+    j.maybe = function (val) {
+        var notNullable = j.isUndefined(arguments[1]) && Boolean(val);
+        return j.isType(arguments[1], val) || notNullable ? val : null;
     };
     
-    j.either = function either (defaultValue, value) {
-        return j.isNull(j.maybe(value, arguments[2])) ? defaultValue : value;
+    j.either = function (defaultVal, val) {
+        return j.isNull(j.maybe(val, arguments[2])) ? defaultVal : val;
     };
     
-    j.pick = function pick (key, obj) {
+    j.pick = function (key, obj) {
         var dereferenceable = !j.isNull(obj) && (j.isType('object', obj) || j.isType('array', obj)),
-            pickedValue = dereferenceable ? obj[key] : null;
-        return j.isUndefined(pickedValue) ? null : pickedValue;
+            pickedval = dereferenceable ? obj[key] : null;
+        return j.isUndefined(pickedval) ? null : pickedval;
     };
     
-    j.slice = function slice (start, userArray, end) {
+    j.slice = function (start, userArray, end) {
         return Array.prototype.slice.call(userArray, start, end);
     };
     
-    j.apply = function apply (userFn, args) {
+    j.apply = function (userFn, args) {
         return userFn.apply(null, args);
     }
     
-    function prepPartial (userFn, args) {
-        return [j.either(j.identity, userFn, 'function'), j.slice(1, args)];
-    }
-    
-    j.partial = function partial (userFn) {
+    j.partial = function (userFn) {
         return function (partialArgs) {
             return j.apply(partialArgs[0], partialArgs[1].concat(j.slice(1, arguments)));
-        }.bind(null, prepPartial(userFn, arguments));
+        }.bind(null, [j.either(j.identity, userFn, 'function'), j.slice(1, arguments)]);
     };
 
-    j.rpartial = function partial (userFn) {
+    j.rpartial = function (userFn) {
         return function (partialArgs) {
             return j.apply(partialArgs[0], j.slice(1, arguments).concat(partialArgs[1]));
-        }.bind(null, prepPartial(userFn, arguments));
+        }.bind(null, [j.either(j.identity, userFn, 'function'), j.slice(1, arguments)]);
     };
     
-    j.splitPartial = function splitPartial (userFn, left, right) {
+    j.splitPartial = function (userFn, left, right) {
         return j.apply(j.rpartial,
                       [j.apply(j.partial,
                               [j.either(j.identity, userFn, 'function')]
