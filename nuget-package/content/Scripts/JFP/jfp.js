@@ -27,6 +27,10 @@ var jfp = (function () {
         return value === null;
     };
     
+    j.not = function not (value) {
+        return !value;
+    };
+    
     j.maybe = function maybe (value) {
         var notNullable = j.isUndefined(arguments[1]) && Boolean(value);
         return j.isType(arguments[1], value) || notNullable ? value : null;
@@ -64,6 +68,14 @@ var jfp = (function () {
         return function (partialArgs) {
             return j.apply(partialArgs[0], j.slice(1, arguments).concat(partialArgs[1]));
         }.bind(null, prepPartial(userFn, arguments));
+    };
+    
+    j.splitPartial = function splitPartial (userFn, left, right) {
+        return j.apply(j.rpartial,
+                      [j.apply(j.partial,
+                              [j.either(j.identity, userFn, 'function')]
+                                .concat(j.either([], left, 'array')))]
+                                    .concat(j.either([], right, 'array')));
     };
     
 })(jfp);

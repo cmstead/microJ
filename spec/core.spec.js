@@ -208,3 +208,37 @@ describe('rpartial', function () {
     });
     
 });
+
+describe('splitPartial', function () {
+    
+    it('should return a function', function () {
+        expect(typeof j.splitPartial()).toBe('function');
+    });
+    
+    it('should perform a left partial with the first array of values', function () {
+        var spy = jasmine.createSpy();
+        
+        j.splitPartial(spy, [1, 2, 3])(4);
+        expect(spy).toHaveBeenCalledWith(1, 2, 3, 4);
+    });
+    
+    it('should perform a left partial with the first array of values', function () {
+        var spy = jasmine.createSpy();
+        
+        j.splitPartial(spy, [], [1, 2, 3])(4);
+        expect(spy).toHaveBeenCalledWith(4, 1, 2, 3);
+    });
+    
+});
+
+describe('not', function () {
+    
+    it('should return false when true is passed', function () {
+        expect(j.not(true)).toBe(false);
+    });
+    
+    it('should return true when false is passed', function () {
+        expect(j.not(false)).toBe(true);
+    });
+    
+});
