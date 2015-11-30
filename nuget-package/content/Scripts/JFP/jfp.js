@@ -46,8 +46,8 @@ var jfp = (function () {
         return j.isUndefined(pickedval) ? null : pickedval;
     };
     
-    j.slice = function (start, userArray, end) {
-        return Array.prototype.slice.call(userArray, start, end);
+    j.slice = function (start, list) {
+        return Array.prototype.slice.call(list, start, arguments[2]);
     };
     
     j.apply = function (userFn, args) {
@@ -66,14 +66,43 @@ var jfp = (function () {
         }.bind(null, [j.either(j.identity, userFn, 'function'), j.slice(1, arguments)]);
     };
     
-    j.splitPartial = function (userFn, left, right) {
-        return j.apply(j.rpartial,
-                      [j.apply(j.partial,
-                              [j.either(j.identity, userFn, 'function')]
-                                .concat(j.either([], left, 'array')))]
-                                    .concat(j.either([], right, 'array')));
+    j.curry = function (userFn) {
+        var args = j.slice(1, arguments);
+        return args.length < userFn.length ? j.apply(j.partial, [userFn].concat(args)) : j.apply(userFn, args);
     };
     
+    j.equal = function (a, b) {
+        return a === b;
+    };
+    
+})(jfp);
+
+(function (j) {
+	'use strict';
+	
+	j.first = j.partial(j.pick, 0);
+	
+	j.last = function (list) {
+		return j.pick(list.length - 1, list);
+	};
+	
+	j.rest = function (list) {
+		return j.either([], list, 'array').slice(1);
+	};
+	
+	j.dropLast = function (list) {
+		var _list = j.either([], list, 'array');
+		return j.slice(0, _list, _list.length - 1);
+	};
+	
+	j.cons = function (value, list) {
+		return j.isUndefined(value) ? [] : [value].concat(j.either(j.cons(list), list, 'array'));
+	};
+	
+	j.reduce = function (userFn, list) {
+		return Array.prototype.reduce.apply(list, j.cons(userFn, arguments[2]));
+	}
+	
 })(jfp);
 
 var j = jfp;

@@ -40,8 +40,8 @@
         return j.isUndefined(pickedval) ? null : pickedval;
     };
     
-    j.slice = function (start, userArray, end) {
-        return Array.prototype.slice.call(userArray, start, end);
+    j.slice = function (start, list) {
+        return Array.prototype.slice.call(list, start, arguments[2]);
     };
     
     j.apply = function (userFn, args) {
@@ -60,12 +60,13 @@
         }.bind(null, [j.either(j.identity, userFn, 'function'), j.slice(1, arguments)]);
     };
     
-    j.splitPartial = function (userFn, left, right) {
-        return j.apply(j.rpartial,
-                      [j.apply(j.partial,
-                              [j.either(j.identity, userFn, 'function')]
-                                .concat(j.either([], left, 'array')))]
-                                    .concat(j.either([], right, 'array')));
+    j.curry = function (userFn) {
+        var args = j.slice(1, arguments);
+        return args.length < userFn.length ? j.apply(j.partial, [userFn].concat(args)) : j.apply(userFn, args);
+    };
+    
+    j.equal = function (a, b) {
+        return a === b;
     };
     
 })(jfp);

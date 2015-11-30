@@ -209,28 +209,6 @@ describe('rpartial', function () {
     
 });
 
-describe('splitPartial', function () {
-    
-    it('should return a function', function () {
-        expect(typeof j.splitPartial()).toBe('function');
-    });
-    
-    it('should perform a left partial with the first array of values', function () {
-        var spy = jasmine.createSpy();
-        
-        j.splitPartial(spy, [1, 2, 3])(4);
-        expect(spy).toHaveBeenCalledWith(1, 2, 3, 4);
-    });
-    
-    it('should perform a left partial with the first array of values', function () {
-        var spy = jasmine.createSpy();
-        
-        j.splitPartial(spy, [], [1, 2, 3])(4);
-        expect(spy).toHaveBeenCalledWith(4, 1, 2, 3);
-    });
-    
-});
-
 describe('not', function () {
     
     it('should return false when true is passed', function () {
@@ -239,6 +217,34 @@ describe('not', function () {
     
     it('should return true when false is passed', function () {
         expect(j.not(false)).toBe(true);
+    });
+    
+});
+
+describe('curry', function () {
+    
+    it('should return a curried function', function () {
+        expect(j.curry(j.identity)(5)).toBe(5);
+    });
+    
+    it('should execute the function if all arguments are satisfied', function () {
+        expect(j.curry(j.identity, 5)).toBe(5);
+    });
+    
+    it('should partially apply some arguments', function () {
+        expect(j.curry(function (a, b){ return a * b; }, 3)(7)).toBe(21);
+    });
+    
+});
+
+describe('equal', function () {
+    
+    it('should return true if the two values are equal', function () {
+        expect(j.equal('foo', 'foo')).toBe(true);
+    });
+    
+    it('should return false if the two values are not equal', function () {
+        expect(j.equal('foo', 'bar')).toBe(false);
     });
     
 });
