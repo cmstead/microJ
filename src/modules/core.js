@@ -1,6 +1,10 @@
 (function (j) {
     'use strict';
     
+    j.equal = function (a, b) {
+        return a === b;
+    };
+    
     j.identity = function (val) {
         return val;
     };
@@ -62,11 +66,11 @@
     
     j.curry = function (userFn) {
         var args = j.slice(1, arguments);
-        return args.length < userFn.length ? j.apply(j.partial, [userFn].concat(args)) : j.apply(userFn, args);
+        return args.length < userFn.length ? j.apply(j.partial, [j.curry, userFn].concat(args)) : j.apply(userFn, args);
     };
-    
-    j.equal = function (a, b) {
-        return a === b;
+
+    j.always = function (value) {
+        return j.partial(j.identity, value);
     };
     
 })(jfp);

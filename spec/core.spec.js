@@ -232,7 +232,7 @@ describe('curry', function () {
     });
     
     it('should partially apply some arguments', function () {
-        expect(j.curry(function (a, b){ return a * b; }, 3)(7)).toBe(21);
+        expect(j.curry(function (a, b, c){ return a * b * c; }, 1)(3)(7)).toBe(21);
     });
     
 });
@@ -248,3 +248,16 @@ describe('equal', function () {
     });
     
 });
+
+describe('always', function () {
+    
+    it('should return a function', function () {
+        expect(j.getType(j.always())).toBe('function');
+    });
+    
+    it('should return a function which returns passed value', function () {
+        expect(j.always('foo')()).toBe('foo');
+    });
+    
+});
+

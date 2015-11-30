@@ -7,6 +7,8 @@
             "src/modules/setup.js",
             "src/modules/core.js",
             "src/modules/array.js",
+            "src/modules/object.js",
+            "src/modules/composite.js",
             "src/modules/expose.js"
         ],
         "dest": "dist/jfp.js"

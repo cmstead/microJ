@@ -20,8 +20,20 @@
 		return j.isUndefined(value) ? [] : [value].concat(j.either(j.cons(list), list, 'array'));
 	};
 	
+	j.conj = function (value, list) {
+		return j.either(j.cons(list), list, 'array').concat(j.cons(value));
+	};
+	
 	j.reduce = function (userFn, list) {
-		return Array.prototype.reduce.apply(list, j.cons(userFn, arguments[2]));
-	}
+		return j.isType('array', list) ? list.reduce.apply(list, j.cons(userFn, j.cons(arguments[2]))) : null;
+	};
+	
+	j.map = function (userFn, list) {
+		return j.either([], list, 'array').map(j.either(j.identity, userFn, 'function'));
+	};
+	
+	j.filter = function (predicate, list) {
+		return j.either([], list, 'array').filter(j.either(j.always(true), predicate, 'function'));
+	};
 	
 })(jfp);

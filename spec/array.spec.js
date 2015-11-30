@@ -86,6 +86,30 @@ describe('cons', function () {
 		expect(JSON.stringify(j.cons(1, [2, 3, 4]))).toBe('[1,2,3,4]');
 	});
 	
+	it('should create new list from two non-list arguments', function () {
+		expect(JSON.stringify(j.cons(1, 2))).toBe('[1,2]');
+	});
+	
+});
+
+describe('conj', function () {
+	
+	it('should return an array', function () {
+		expect(j.getType(j.conj())).toBe('array');
+	});
+	
+	it('should insert first argument into array', function () {
+		expect(JSON.stringify(j.conj(1))).toBe('[1]');
+	});
+	
+	it('should create new list from original list and first argument', function () {
+		expect(JSON.stringify(j.conj(1, [2, 3, 4]))).toBe('[2,3,4,1]');
+	});
+	
+	it('should create new list from two non-list arguments', function () {
+		expect(JSON.stringify(j.conj(1, 2))).toBe('[2,1]');
+	});
+	
 });
 
 describe('reduce', function () {
@@ -100,6 +124,50 @@ describe('reduce', function () {
 	
 	it('should reduce with an initial value', function () {
 		expect(j.reduce(add, [1, 2, 3, 4], 5)).toBe(15);
+	});
+	
+	it('should return null if list argument is not an array', function () {
+		expect(j.reduce(add, 'foo')).toBe(null);
+	});
+	
+});
+
+describe('map', function () {
+	
+	function add3 (a) {
+		return a + 3;
+	}
+	
+	it('should apply the function to all elements of an array', function () {
+		expect(JSON.stringify(j.map(add3, [1, 2, 3, 4]))).toBe('[4,5,6,7]');
+	});
+	
+	it('should return an empty array if list argument is not an array', function () {
+		expect(JSON.stringify(j.map(add3, 'foo'))).toBe('[]');
+	});
+	
+	it('should return a copy of the original array if userFn argument is not a function', function () {
+		expect(JSON.stringify(j.map('foo', [1, 2, 3, 4]))).toBe('[1,2,3,4]');
+	});
+	
+});
+
+describe('filter', function () {
+	
+	function isEven (value) {
+		return value % 2 === 0;
+	}
+	
+	it('should filter using provided function', function () {
+		expect(JSON.stringify(j.filter(isEven, [1, 2, 3, 4]))).toBe('[2,4]');
+	});
+	
+	it('should return an empty array if list argument is not an array', function () {
+		expect(JSON.stringify(j.filter(isEven, 'foo'))).toBe('[]');
+	});
+	
+	it('should return a copy of the original array if predicate argument is not a function', function () {
+		expect(JSON.stringify(j.filter('foo', [1, 2, 3, 4]))).toBe('[1,2,3,4]');
 	});
 	
 });

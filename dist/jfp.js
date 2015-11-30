@@ -1,11 +1,34 @@
-var jfp = (function () {
+var jfp = (function(){
     'use strict';
     
-    return function () {};
+    function curryAlias(){
+        var args = jfp.slice(0, arguments);
+
+        args[0] = jfp.isType('string', args[0]) ? jfp[args[0]] : args[0];
+        
+        return jfp.apply(jfp.curry, args);
+    }
+    
+    function pickAlias(key, val){
+        var _key = key.slice(1);
+        return jfp.isUndefined(val) ? jfp.partial(jfp.pick, _key) : jfp.pick(_key, val);
+    }
+    
+    return function(){
+        var args = jfp.slice(0, arguments),
+            resolver = jfp.isType('string', args[0]) && args[0][0] === ':' ? pickAlias : curryAlias;
+        
+        return jfp.apply(resolver, args);
+    };
+    
 })();
 
 (function (j) {
     'use strict';
+    
+    j.equal = function (a, b) {
+        return a === b;
+    };
     
     j.identity = function (val) {
         return val;
@@ -68,11 +91,11 @@ var jfp = (function () {
     
     j.curry = function (userFn) {
         var args = j.slice(1, arguments);
-        return args.length < userFn.length ? j.apply(j.partial, [userFn].concat(args)) : j.apply(userFn, args);
+        return args.length < userFn.length ? j.apply(j.partial, [j.curry, userFn].concat(args)) : j.apply(userFn, args);
     };
-    
-    j.equal = function (a, b) {
-        return a === b;
+
+    j.always = function (value) {
+        return j.partial(j.identity, value);
     };
     
 })(jfp);
@@ -99,9 +122,76 @@ var jfp = (function () {
 		return j.isUndefined(value) ? [] : [value].concat(j.either(j.cons(list), list, 'array'));
 	};
 	
+	j.conj = function (value, list) {
+		return j.either(j.cons(list), list, 'array').concat(j.cons(value));
+	};
+	
 	j.reduce = function (userFn, list) {
-		return Array.prototype.reduce.apply(list, j.cons(userFn, arguments[2]));
+		return j.isType('array', list) ? list.reduce.apply(list, j.cons(userFn, j.cons(arguments[2]))) : null;
+	};
+	
+	j.map = function (userFn, list) {
+		return j.either([], list, 'array').map(j.either(j.identity, userFn, 'function'));
+	};
+	
+	j.filter = function (predicate, list) {
+		return j.either([], list, 'array').filter(j.either(j.always(true), predicate, 'function'));
+	};
+	
+})(jfp);
+
+(function (j) {
+	'use strict';
+	
+	j.pluckKeys = function (keys, obj) {
+		var _obj = j.either({}, obj, 'object');
+		return j.reduce(function (state, key) {
+							state[key] = _obj[key];
+							return state;
+						}, j.either([], keys, 'array'), {});
+	};
+	
+	j.pluck = function (key, obj) {
+		return j.pluckKeys([key], obj);
 	}
+	
+	j.deref = function (key, obj) {
+		return j.reduce(function (state, key) {
+							return j.pick(key, state);
+						}, j.either('', key, 'string').split('.'), obj);
+	};
+	
+	j.getKeys = function (obj) {
+		return Object.keys(j.either({}, obj, 'object'));
+	};
+	
+	j.toValues = function (obj) {
+		return j.reduce(function (state, key) {
+							return j.conj(j.pick(key, obj), state);
+						}, j.getKeys(obj), []);
+	};
+	
+})(jfp);
+
+(function (j) {
+	'use strict';
+	
+	function compositor(f, g){
+        var _f = j.either(j.identity, f, 'function'),
+            _g = j.either(j.identity, g, 'function');
+            
+        return function () {
+            return _f(j.apply(_g, j.slice(0, arguments)));
+        }
+    }
+
+    j.compose = function () {
+        return j.reduce(compositor, j.slice(0, arguments), j.identity);
+    }
+	
+	j.pipeline = function (value){
+        return j.apply(j.compose, j.slice(1, arguments).reverse())(value);
+    }
 	
 })(jfp);
 
