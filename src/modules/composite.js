@@ -1,17 +1,13 @@
 (function (j) {
 	'use strict';
 	
-	function compositor(f, g){
-        var _f = j.either(j.identity, f, 'function'),
-            _g = j.either(j.identity, g, 'function');
-            
-        return function () {
-            return _f(j.apply(_g, j.slice(0, arguments)));
-        }
-    }
-
     j.compose = function () {
-        return j.reduce(compositor, j.slice(0, arguments), j.identity);
+        return j.reduce(function (f, g) {
+            return function () {
+                return j.either(j.identity, f, 'function')(j.apply(j.either(j.identity, g, 'function'),
+                                                                j.slice(0, arguments)));
+            }
+        }, j.slice(0, arguments), j.identity);
     }
 	
 	j.pipeline = function (value){
