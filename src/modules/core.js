@@ -30,8 +30,7 @@
     };
     
     j.maybe = function (val) {
-        var notNullable = j.isUndefined(arguments[1]) && Boolean(val);
-        return j.isType(arguments[1], val) || notNullable ? val : null;
+        return j.isType(arguments[1], val) || (j.isUndefined(arguments[1]) && Boolean(val)) ? val : null;
     };
     
     j.either = function (defaultVal, val) {
@@ -39,8 +38,7 @@
     };
     
     j.pick = function (key, obj) {
-        var dereferenceable = !j.isNull(obj) && (j.isType('object', obj) || j.isType('array', obj)),
-            pickedval = dereferenceable ? obj[key] : null;
+        var pickedval = !j.isNull(obj) && (j.isType('object', obj) || j.isType('array', obj)) ? obj[key] : null;
         return j.isUndefined(pickedval) ? null : pickedval;
     };
     

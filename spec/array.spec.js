@@ -171,3 +171,23 @@ describe('filter', function () {
 	});
 	
 });
+
+describe('some', function () {
+    
+    it('should return a boolean', function () {
+        expect(j.getType(j.some())).toBe('boolean');
+    });
+    
+    it('should return false with no arguments', function () {
+        expect(j.some()).toBe(false);
+    });
+    
+    it('should return true if any values in the array match passed predicate', function () {
+        expect(j.some(j('equal', 2), [1, 2, 3, 4])).toBe(true);
+    });
+    
+    it('should return false if no values in the array match passed predicate', function () {
+        expect(j.some(j('equal', 6), [1, 2, 3, 4])).toBe(false);
+    });
+    
+});

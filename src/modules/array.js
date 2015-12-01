@@ -35,5 +35,9 @@
 	j.filter = function (predicate, list) {
 		return j.either([], list, 'array').filter(j.either(j.always(true), predicate, 'function'));
 	};
+    
+    j.some = function (predicate, list) {
+        return j.filter(predicate, list).length > 0;
+    };
 	
 })(jfp);

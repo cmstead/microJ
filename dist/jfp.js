@@ -55,8 +55,7 @@ var jfp = (function(){
     };
     
     j.maybe = function (val) {
-        var notNullable = j.isUndefined(arguments[1]) && Boolean(val);
-        return j.isType(arguments[1], val) || notNullable ? val : null;
+        return j.isType(arguments[1], val) || (j.isUndefined(arguments[1]) && Boolean(val)) ? val : null;
     };
     
     j.either = function (defaultVal, val) {
@@ -64,8 +63,7 @@ var jfp = (function(){
     };
     
     j.pick = function (key, obj) {
-        var dereferenceable = !j.isNull(obj) && (j.isType('object', obj) || j.isType('array', obj)),
-            pickedval = dereferenceable ? obj[key] : null;
+        var pickedval = !j.isNull(obj) && (j.isType('object', obj) || j.isType('array', obj)) ? obj[key] : null;
         return j.isUndefined(pickedval) ? null : pickedval;
     };
     
@@ -137,6 +135,10 @@ var jfp = (function(){
 	j.filter = function (predicate, list) {
 		return j.either([], list, 'array').filter(j.either(j.always(true), predicate, 'function'));
 	};
+    
+    j.some = function (predicate, list) {
+        return j.filter(predicate, list).length > 0;
+    };
 	
 })(jfp);
 
