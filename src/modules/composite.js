@@ -1,5 +1,3 @@
-/* global jfp */
-
 (function (j) {
     'use strict';
     

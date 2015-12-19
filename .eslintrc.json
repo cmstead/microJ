@@ -17,7 +17,14 @@
         ],
         "no-unused-vars": [
             1
+        ],
+        "max-depth": [
+            2,
+            2
         ]
+    },
+    "globals": {
+        "jfp": true
     },
     "env": {
         "node": true,

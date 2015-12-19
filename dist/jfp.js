@@ -1,5 +1,3 @@
-/* global jfp */
-
 var jfp = (function(){
     'use strict';
     
@@ -24,8 +22,6 @@ var jfp = (function(){
     };
     
 })();
-
-/* global jfp */
 
 (function (j) {
     'use strict';
@@ -102,8 +98,6 @@ var jfp = (function(){
     
 })(jfp);
 
-/* global jfp */
-
 (function (j) {
     'use strict';
     
@@ -148,8 +142,6 @@ var jfp = (function(){
     
 })(jfp);
 
-/* global jfp */
-
 (function (j) {
     'use strict';
     
@@ -183,8 +175,6 @@ var jfp = (function(){
     
 })(jfp);
 
-/* global jfp */
-
 (function (j) {
     'use strict';
     
@@ -202,8 +192,6 @@ var jfp = (function(){
     };
     
 })(jfp);
-
-/* global jfp */
 
 var j = jfp;
 
