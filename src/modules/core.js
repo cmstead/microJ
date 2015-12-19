@@ -1,3 +1,5 @@
+/* global jfp */
+
 (function (j) {
     'use strict';
     
@@ -48,7 +50,7 @@
     
     j.apply = function (userFn, args) {
         return userFn.apply(null, args);
-    }
+    };
     
     j.partial = function (userFn) {
         return function (partialArgs) {

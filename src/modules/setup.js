@@ -1,3 +1,5 @@
+/* global jfp */
+
 var jfp = (function(){
     'use strict';
     

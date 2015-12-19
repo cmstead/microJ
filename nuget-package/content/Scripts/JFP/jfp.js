@@ -1,3 +1,5 @@
+/* global jfp */
+
 var jfp = (function(){
     'use strict';
     
@@ -22,6 +24,8 @@ var jfp = (function(){
     };
     
 })();
+
+/* global jfp */
 
 (function (j) {
     'use strict';
@@ -73,7 +77,7 @@ var jfp = (function(){
     
     j.apply = function (userFn, args) {
         return userFn.apply(null, args);
-    }
+    };
     
     j.partial = function (userFn) {
         return function (partialArgs) {
@@ -98,100 +102,108 @@ var jfp = (function(){
     
 })(jfp);
 
+/* global jfp */
+
 (function (j) {
-	'use strict';
-	
-	j.first = j.partial(j.pick, 0);
-	
-	j.last = function (list) {
-		return j.pick(list.length - 1, list);
-	};
-	
-	j.rest = function (list) {
-		return j.either([], list, 'array').slice(1);
-	};
-	
-	j.dropLast = function (list) {
-		var _list = j.either([], list, 'array');
-		return j.slice(0, _list, _list.length - 1);
-	};
-	
-	j.cons = function (value, list) {
-		return j.isUndefined(value) ? [] : [value].concat(j.either(j.cons(list), list, 'array'));
-	};
-	
-	j.conj = function (value, list) {
-		return j.either(j.cons(list), list, 'array').concat(j.cons(value));
-	};
-	
-	j.reduce = function (userFn, list) {
-		return j.isType('array', list) ? list.reduce.apply(list, j.cons(userFn, j.cons(arguments[2]))) : null;
-	};
-	
-	j.map = function (userFn, list) {
-		return j.either([], list, 'array').map(j.either(j.identity, userFn, 'function'));
-	};
-	
-	j.filter = function (predicate, list) {
-		return j.either([], list, 'array').filter(j.either(j.always(true), predicate, 'function'));
-	};
+    'use strict';
+    
+    j.first = j.partial(j.pick, 0);
+    
+    j.last = function (list) {
+        return j.pick(list.length - 1, list);
+    };
+    
+    j.rest = function (list) {
+        return j.either([], list, 'array').slice(1);
+    };
+    
+    j.dropLast = function (list) {
+        var _list = j.either([], list, 'array');
+        return j.slice(0, _list, _list.length - 1);
+    };
+    
+    j.cons = function (value, list) {
+        return j.isUndefined(value) ? [] : [value].concat(j.either(j.cons(list), list, 'array'));
+    };
+    
+    j.conj = function (value, list) {
+        return j.either(j.cons(list), list, 'array').concat(j.cons(value));
+    };
+    
+    j.reduce = function (userFn, list) {
+        return j.isType('array', list) ? list.reduce.apply(list, j.cons(userFn, j.cons(arguments[2]))) : null;
+    };
+    
+    j.map = function (userFn, list) {
+        return j.either([], list, 'array').map(j.either(j.identity, userFn, 'function'));
+    };
+    
+    j.filter = function (predicate, list) {
+        return j.either([], list, 'array').filter(j.either(j.always(true), predicate, 'function'));
+    };
     
     j.some = function (predicate, list) {
         return j.filter(predicate, list).length > 0;
     };
-	
+    
 })(jfp);
 
-(function (j) {
-	'use strict';
-	
-	j.pluckKeys = function (keys, obj) {
-		var _obj = j.either({}, obj, 'object');
-		return j.reduce(function (state, key) {
-							state[key] = _obj[key];
-							return state;
-						}, j.either([], keys, 'array'), {});
-	};
-	
-	j.pluck = function (key, obj) {
-		return j.pluckKeys([key], obj);
-	}
-	
-	j.deref = function (key, obj) {
-		return j.reduce(function (state, key) {
-							return j.pick(key, state);
-						}, j.either('', key, 'string').split('.'), obj);
-	};
-	
-	j.getKeys = function (obj) {
-		return Object.keys(j.either({}, obj, 'object'));
-	};
-	
-	j.toValues = function (obj) {
-		return j.reduce(function (state, key) {
-							return j.conj(j.pick(key, obj), state);
-						}, j.getKeys(obj), []);
-	};
-	
-})(jfp);
+/* global jfp */
 
 (function (j) {
-	'use strict';
-	
+    'use strict';
+    
+    j.pluckKeys = function (keys, obj) {
+        var _obj = j.either({}, obj, 'object');
+        return j.reduce(function (state, key) {
+                            state[key] = _obj[key];
+                            return state;
+                        }, j.either([], keys, 'array'), {});
+    };
+    
+    j.pluck = function (key, obj) {
+        return j.pluckKeys([key], obj);
+    };
+    
+    j.deref = function (key, obj) {
+        return j.reduce(function (state, key) {
+                            return j.pick(key, state);
+                        }, j.either('', key, 'string').split('.'), obj);
+    };
+    
+    j.getKeys = function (obj) {
+        return Object.keys(j.either({}, obj, 'object'));
+    };
+    
+    j.toValues = function (obj) {
+        return j.reduce(function (state, key) {
+                            return j.conj(j.pick(key, obj), state);
+                        }, j.getKeys(obj), []);
+    };
+    
+})(jfp);
+
+/* global jfp */
+
+(function (j) {
+    'use strict';
+    
     j.compose = function () {
         return j.reduce(function (f, g) {
             return function () {
                 return j.either(j.identity, f, 'function')(j.apply(j.either(j.identity, g, 'function'),
                                                                 j.slice(0, arguments)));
-            }
+            };
         }, j.slice(0, arguments), j.identity);
-    }
-	
-	j.pipeline = function (value){
+    };
+    
+    j.pipeline = function (value){
         return j.apply(j.compose, j.slice(1, arguments).reverse())(value);
-    }
-	
+    };
+    
 })(jfp);
+
+/* global jfp */
 
 var j = jfp;
 
